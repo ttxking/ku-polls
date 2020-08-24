@@ -1,4 +1,6 @@
-# Kasetsart Polls
+# Mhee Polls for Kasetsart University
+
+A Django application 
 
 Web application for conducting online polls and surveys.
 
