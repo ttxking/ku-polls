@@ -1,7 +1,5 @@
 
-# Mhee Polls for Kasetsart University
-
-A Django application. 
+# Kasetsart Polls
 
 Web application for conducting online polls and surveys.
 
@@ -10,6 +8,3 @@ Web application for conducting online polls and surveys.
 [Vision Statement](../../wiki/Vision%20Statement) 
 [Requirements](../../wiki/Requirements)
 
-
-## Licensing
-Contact ttxking
