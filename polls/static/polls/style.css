@@ -1,0 +1,34 @@
+li a {
+    color: whitesmoke;
+}
+h1 {
+    color: whitesmoke;
+    text-shadow: 2px 2px black;
+}
+
+a {
+    color : whitesmoke;
+    text-shadow: 2px 2px black;
+}
+
+input[type=submit] {
+   font-family: "Lucida Console", Monaco, monospace;
+    font-weight: bold;
+}
+
+label[for^="choice"]{
+    color: whitesmoke;
+    text-shadow: 2px 2px black;
+}
+
+li {
+    color: whitesmoke;
+    text-shadow: 2px 2px black;
+}
+
+body {
+    background-image: url("images/background.jpeg");
+    background-size: cover;
+    font-weight: bold;
+    font-family: "Lucida Console", Monaco, monospace;
+}

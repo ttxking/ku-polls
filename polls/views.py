@@ -1,6 +1,6 @@
 
 # Create your views here.
-from datetime import timezone
+from django.utils import timezone
 
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import loader
