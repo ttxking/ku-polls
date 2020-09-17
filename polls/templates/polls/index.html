@@ -12,8 +12,13 @@
 {% if latest_question_list %}
     <ul >
     {% for question in latest_question_list %}
-        <!-- {hardcode -> <li><a href="/polls/{{ question_id }}/">{{ question.question_text }}</a></li>} -->
-        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+        <li>
+            {{question.question_text}}
+        </li>
+        <a href="{% url 'polls:detail' question.id %}">
+            <button class="vote"{%  if not question.can_vote %} disabled {% endif %}> Vote </button></a>
+        <a href="{% url 'polls:results' question.id %}"><button class="results"> Results </button></a>
+
     {% endfor %}
     </ul>
 {% else %}
