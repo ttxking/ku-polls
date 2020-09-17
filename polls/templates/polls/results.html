@@ -12,4 +12,4 @@
 </table>
 
 
-<a href="{% url 'polls:detail' question.id %}"><input type="button" value="Vote Again"></a>  <a href="{% url 'polls:index' %}" ><input type="button" value="Back"> </a>
+<a href="{% url 'polls:detail' question.id %}"><input type="button" value="Vote Again" {%  if not question.can_vote %} disabled {% endif %}></a>  <a href="{% url 'polls:index' %}" ><input type="button" value="Back"> </a>

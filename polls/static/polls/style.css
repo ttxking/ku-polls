@@ -5,7 +5,6 @@ body {
     font-family: "Lucida Console", Monaco, monospace;
 }
 
-
 li a {
     color: whitesmoke;
 }
@@ -25,10 +24,17 @@ input[type=submit] {
     font-weight: bold;
 }
 
-li,
-h3 {
+li{
     color: whitesmoke;
     text-shadow: 2px 2px black;
+}
+
+h3 {
+    border-style: solid;
+    border-color: red;
+    background-color: darkred;
+    color: whitesmoke;
+    text-align: center;
 }
 
 label[for^="choice"] {

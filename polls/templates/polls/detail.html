@@ -2,7 +2,13 @@
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
 
 <h1> {{ question.question_text }} </h1>
-{% if error_message %}<p><strong>{{ error_message }}</strong></p> {% endif %}
+{% if messages %}
+<ul class="messages">
+  {% for msg in messages %}
+    <h3 class="{{msg.error}}">{{ msg }}</h3>
+  {% endfor %}
+</ul>
+{% endif %}
 
 <form action="{% url 'polls:vote' question.id%}" method="post">
 {% csrf_token %}
