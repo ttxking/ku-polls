@@ -42,3 +42,8 @@ label[for^="choice"] {
     text-shadow: 2px 2px black;
 }
 
+table {
+    color: whitesmoke;
+    text-shadow: 2px 2px black;
+}
+

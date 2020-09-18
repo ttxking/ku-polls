@@ -24,9 +24,9 @@ from .models import Question, Choice
 #             pub_date__lte=timezone.now()
 #         ).order_by('-pub_date')[:5]
 
-def index(request) :
+def index(request):
     all_question = Question.objects.all().order_by('-pub_date')
-    return render(request, 'polls/index.html', {'latest_question_list':all_question})
+    return render(request, 'polls/index.html', {'latest_question_list': all_question})
 
 
 # class DetailView(generic.DetailView):
@@ -39,14 +39,13 @@ def index(request) :
 #         """
 #         return Question.objects.filter(pub_date__lte=timezone.now())
 
-def detail(request, pk) :
+def detail(request, pk):
     question = get_object_or_404(Question, pk=pk)
-    if not question.can_vote() :
+    if not question.can_vote():
         messages.error(request, f"You can't vote on this question")
         return redirect('polls:index')
-    else :
-        return render(request, 'polls/detail.html', {'question':question})
-
+    else:
+        return render(request, 'polls/detail.html', {'question': question})
 
 
 class ResultsView(generic.DetailView):
@@ -71,6 +70,3 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
-
-
-
