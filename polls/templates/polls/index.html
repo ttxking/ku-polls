@@ -1,26 +1,38 @@
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+{% block content %}
+    {% if user.is_authenticated %}
+        <h2 style="color: whitesmoke">Welcome Back, {{ user.first_name }}</h2>
+    {% else %}
+        <h2 style="color: whitesmoke">To vote Please <a href="{% url 'login' %}" style="color: whitesmoke">Login</a>
+        </h2>
+    {% endif %}
+    {% if messages %}
+        <ul class="messages">
+            {% for msg in messages %}
+                <h3 class="{{ msg.error }}">{{ msg }}</h3>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
-{% if messages %}
-<ul class="messages">
-  {% for msg in messages %}
-    <h3 class="{{msg.error}}">{{ msg }}</h3>
-  {% endfor %}
-</ul>
-{% endif %}
+    {% if latest_question_list %}
+        <ul>
+            {% for question in latest_question_list %}
+                <li>
+                    {{ question.question_text }}
+                </li>
+                <a href="{% url 'polls:detail' question.id %}">
+                    <button class="vote"{% if not question.can_vote %} disabled {% elif not user.is_authenticated %}
+                            disabled {% endif %}>Vote
+                    </button>
+                </a>
+                <a href="{% url 'polls:results' question.id %}">
+                    <button class="results">Results</button>
+                </a>
 
-{% if latest_question_list %}
-    <ul >
-    {% for question in latest_question_list %}
-        <li>
-            {{question.question_text}}
-        </li>
-        <a href="{% url 'polls:detail' question.id %}">
-            <button class="vote"{%  if not question.can_vote %} disabled {% endif %}> Vote </button></a>
-        <a href="{% url 'polls:results' question.id %}"><button class="results"> Results </button></a>
-
-    {% endfor %}
-    </ul>
-{% else %}
-    <p >No polls are available.</p>
-{% endif %}
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No polls are available.</p>
+    {% endif %}
+{% endblock %}

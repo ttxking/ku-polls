@@ -1,5 +1,5 @@
 # Create your views here.
-
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -30,6 +30,7 @@ def index(request):
 
     """
     all_question = Question.objects.all().order_by('-pub_date')
+
     return render(request, 'polls/index.html', {'latest_question_list': all_question})
 
 
@@ -65,6 +66,7 @@ class ResultsView(generic.DetailView):
     template_name = 'polls/results.html'
 
 
+@login_required
 def vote(request, question_id):
     """Display the vote result of selected questions.
 
