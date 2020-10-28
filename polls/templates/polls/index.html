@@ -2,7 +2,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
 {% block content %}
     {% if user.is_authenticated %}
-        <h2 style="color: whitesmoke">Welcome Back, {{ user.first_name }}</h2>
+        <h2 style="color: whitesmoke">Welcome, {{ user.first_name }}</h2>
     {% else %}
         <h2 style="color: whitesmoke">To vote Please <a href="{% url 'login' %}" style="color: whitesmoke">Login</a>
         </h2>
@@ -22,8 +22,7 @@
                     {{ question.question_text }}
                 </li>
                 <a href="{% url 'polls:detail' question.id %}">
-                    <button class="vote"{% if not question.can_vote %} disabled {% elif not user.is_authenticated %}
-                            disabled {% endif %}>Vote
+                    <button class="vote"{% if not question.can_vote or not user.is_authenticated %} disabled {% endif %}>Vote
                     </button>
                 </a>
                 <a href="{% url 'polls:results' question.id %}">

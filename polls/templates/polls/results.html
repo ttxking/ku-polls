@@ -4,12 +4,15 @@
 <h1>{{ question.question_text }}</h1>
 
 <table width="20%">
-{% for choice in question.choice_set.all %}
-<tr> <td> {{ choice.choice_text }}  </td>
-     <td> {{ choice.votes }} </td>
-</tr>
-{% endfor %}
+    {% for choice in question.choice_set.all %}
+        <tr>
+            <td> {{ choice.choice_text }}  </td>
+            <td> {{ choice.votes }} </td>
+        </tr>
+    {% endfor %}
 </table>
 
 
-<a href="{% url 'polls:detail' question.id %}"><input type="button" value="Vote Again" {%  if not question.can_vote %} disabled {% endif %}></a>  <a href="{% url 'polls:index' %}" ><input type="button" value="Back"> </a>
+<a href="{% url 'polls:detail' question.id %}"><input type="button" value="Vote Again" {% if not question.can_vote %}
+                                                      disabled {% endif %}></a>  <a
+        href="{% url 'polls:index' %}"><input type="button" value="Back"> </a>

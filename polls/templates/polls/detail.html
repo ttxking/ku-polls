@@ -3,19 +3,23 @@
 
 <h1> {{ question.question_text }} </h1>
 {% if messages %}
-<ul class="messages">
-  {% for msg in messages %}
-    <h3 class="{{msg.error}}">{{ msg }}</h3>
-  {% endfor %}
-</ul>
+    <ul class="messages">
+        {% for msg in messages %}
+            <h3 class="{{ msg.error }}">{{ msg }}</h3>
+        {% endfor %}
+    </ul>
 {% endif %}
 
-<form action="{% url 'polls:vote' question.id%}" method="post">
-{% csrf_token %}
-{% for choice in question.choice_set.all %}
-    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value=" {{ choice.id }}">
-    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
-{% endfor %} <br>
+<form action="{% url 'polls:vote' question.id %}" method="post">
+    {% csrf_token %}
+    <input type="radio" name="choice" id="{{ vote.choice.id }}" value=" {{ choice.id }}">
+    <label for="choice{{ forloop.counter }}">{{ vote.choice }}</label><br>
+    {% for choice in question.choice_set.all %}
+        {% if choice != vote.choice %}
+            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value=" {{ choice.id }}">
+            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+        {% endif %}
+    {% endfor %} <br>
 
-<input type="submit" value="Vote">  <a href="{% url 'polls:index' %}" ><input type="button" value="Back"> </a>
+    <input type="submit" value="Vote"> <a href="{% url 'polls:index' %}"><input type="button" value="Back"> </a>
 </form>

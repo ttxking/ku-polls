@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views import generic
 from django.contrib import messages
 
-from .models import Question, Choice
+from .models import Question, Choice, Vote
 
 
 # class IndexView(generic.ListView):
@@ -56,7 +56,8 @@ def detail(request, pk):
         messages.error(request, "You can't vote on this question")
         return redirect('polls:index')
     else:
-        return render(request, 'polls/detail.html', {'question': question})
+        vote = question.vote_set.get(user=request.user)
+        return render(request, 'polls/detail.html', {'question': question, 'vote': vote})
 
 
 class ResultsView(generic.DetailView):
@@ -66,7 +67,7 @@ class ResultsView(generic.DetailView):
     template_name = 'polls/results.html'
 
 
-@login_required
+@login_required(login_url='/accounts/login/')
 def vote(request, question_id):
     """Display the vote result of selected questions.
 
@@ -84,8 +85,14 @@ def vote(request, question_id):
             'question': question,
         })
     else:
-        selected_choice.votes += 1
-        selected_choice.save()
+        previous_choice = question.vote_set.all()
+        if previous_choice:
+            previous_vote = question.vote_set.get(question=question, user=request.user)
+            previous_vote.choice = selected_choice
+            previous_vote.save()
+        else:
+            selected_choice.vote_set.create(question=question, user=request.user)
+
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
