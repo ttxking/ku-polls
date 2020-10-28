@@ -1,6 +1,6 @@
 
 # Kasetsart Polls
-[![Build Status](https://travis-ci.com/ttxking/demo-pyci.svg?branch=master)](https://travis-ci.com/ttxking/demo-pyci)
+[![Build Status](https://travis-ci.com/ttxking/ku-polls.svg?branch=master)](https://travis-ci.com/ttxking/ku-polls)
 [![codecov](https://codecov.io/gh/ttxking/ku-polls/branch/master/graph/badge.svg)](https://codecov.io/gh/ttxking/ku-polls)
 
 Web application for conducting online polls and surveys.
