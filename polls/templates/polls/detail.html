@@ -12,12 +12,13 @@
 
 <form action="{% url 'polls:vote' question.id %}" method="post">
     {% csrf_token %}
-    <input type="radio" name="choice" id="{{ vote.choice.id }}" value=" {{ choice.id }}">
-    <label for="choice{{ forloop.counter }}">{{ vote.choice }}</label><br>
     {% for choice in question.choice_set.all %}
         {% if choice != vote.choice %}
             <input type="radio" name="choice" id="choice{{ forloop.counter }}" value=" {{ choice.id }}">
             <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+        {% else %}
+            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value=" {{ choice.id }}" disabled>
+            <label for="choice{{ forloop.counter }}">{{ vote.choice.choice_text }} -- Can't select the same vote ! </label><br>
         {% endif %}
     {% endfor %} <br>
 

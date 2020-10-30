@@ -53,11 +53,17 @@ class Choice(models.Model):
 
     @property
     def votes(self):
-        """Return sum of the vote for a choice"""
+        """Return sum of the vote for a choice."""
         return Vote.objects.filter(choice=self).count()
 
 
 class Vote(models.Model):
+    """A Choice model.
+
+    Each Choice is associated with a Question, Choices and a User.
+
+    """
+
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     user = models.ForeignKey(django.contrib.auth.models.User,

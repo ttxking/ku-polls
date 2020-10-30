@@ -6,21 +6,16 @@ from django.urls import reverse
 from django.views import generic
 from django.contrib import messages
 
-from .models import Question, Choice, Vote
+from mysite.settings import LOGGING
+from .models import Question, Choice
+import logging.config
 
+from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
+from django.dispatch import receiver
 
-# class IndexView(generic.ListView):
-#     template_name = 'polls/index.html'
-#     context_object_name = 'latest_question_list'
+logging.config.dictConfig(LOGGING)
+logger = logging.getLogger('my_logger')
 
-#     def get_queryset(self):
-#         """
-#         Return the last five published questions (not including those set to be
-#         published in the future).
-#         """
-#         return Question.objects.filter(
-#             pub_date__lte=timezone.now()
-#         ).order_by('-pub_date')[:5]
 
 def index(request):
     """Display all questions in the system according to publication date.
@@ -29,20 +24,11 @@ def index(request):
     HttpResponseObject -- index page
 
     """
+    # Return an 'invalid login' error message.
     all_question = Question.objects.all().order_by('-pub_date')
 
     return render(request, 'polls/index.html', {'latest_question_list': all_question})
 
-
-# class DetailView(generic.DetailView):
-#     model = Question
-#     template_name = 'polls/detail.html'
-
-#     def get_queryset(self):
-#         """
-#         Excludes any questions that aren't published yet.
-#         """
-#         return Question.objects.filter(pub_date__lte=timezone.now())
 
 def detail(request, pk):
     """Display the detail of selected questions.
@@ -56,8 +42,8 @@ def detail(request, pk):
         messages.error(request, "You can't vote on this question")
         return redirect('polls:index')
     else:
-        vote = question.vote_set.get(user=request.user)
-        return render(request, 'polls/detail.html', {'question': question, 'vote': vote})
+        user_vote = question.vote_set.get(user=request.user)
+        return render(request, 'polls/detail.html', {'question': question, 'vote': user_vote})
 
 
 class ResultsView(generic.DetailView):
@@ -78,6 +64,8 @@ def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
+        logger.info(
+            '{user} voted on {question} (id = {id})'.format(user=request.user, question=question, id=question.id))
     except (KeyError, Choice.DoesNotExist):
         # Redisplay the question voting form.
         messages.error(request, "You didn't select a choice.")
@@ -97,3 +85,34 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+
+def get_client_ip(request):
+    """Get the visitor’s actual IP address."""
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
+@receiver(user_logged_in)
+def on_login(user, request, **kwargs):
+    """Log message of login at info level including username and IP address."""
+    logger.info(f'IP: {get_client_ip(request)} {user} just logged in.')
+
+
+@receiver(user_logged_out)
+def on_logout(user, request, **kwargs):
+    """Log message of logout at info level including username and IP address."""
+    try:
+        logger.info(f'IP: {get_client_ip(request)} {user.username} has logged out.')
+    except AttributeError:
+        logger.info(f'IP: {get_client_ip(request)} has logged out.')
+
+
+@receiver(user_login_failed)
+def login_fail(credentials, request, **kwargs):
+    """Log message of fail login attempt at warning level including username and IP address."""
+    logger.warning(f"IP: {get_client_ip(request)} Fail to log in for {credentials['username']}")
