@@ -1,4 +1,4 @@
-  # Create your views here.
+# Create your views here.
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -118,4 +118,3 @@ def on_logout(user, request, **kwargs):
 def login_fail(credentials, request, **kwargs):
     """Log message of fail login attempt at warning level including username and IP address."""
     logger.warning(f"IP: {get_client_ip(request)} Fail to log in for {credentials['username']}")
-
