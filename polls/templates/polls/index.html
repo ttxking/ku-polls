@@ -3,6 +3,7 @@
 {% block content %}
     {% if user.is_authenticated %}
         <h2 style="color: whitesmoke">Welcome, {{ user.first_name }}</h2>
+        <h2 style="color: whitesmoke"><a href="{% url 'logout' %}" style="color: whitesmoke">Logout</a></h2>
     {% else %}
         <h2 style="color: whitesmoke">To vote Please <a href="{% url 'login' %}" style="color: whitesmoke">Login</a>
         </h2>

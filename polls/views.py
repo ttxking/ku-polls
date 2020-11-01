@@ -1,4 +1,4 @@
-# Create your views here.
+  # Create your views here.
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -7,7 +7,7 @@ from django.views import generic
 from django.contrib import messages
 
 from mysite.settings import LOGGING
-from .models import Question, Choice
+from .models import Question, Choice, Vote
 import logging.config
 
 from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
@@ -42,7 +42,10 @@ def detail(request, pk):
         messages.error(request, "You can't vote on this question")
         return redirect('polls:index')
     else:
-        user_vote = question.vote_set.get(user=request.user)
+        try:
+            user_vote = question.vote_set.get(user=request.user)
+        except (KeyError, Vote.DoesNotExist):
+            return render(request, 'polls/detail.html', {'question': question})
         return render(request, 'polls/detail.html', {'question': question, 'vote': user_vote})
 
 
@@ -73,8 +76,7 @@ def vote(request, question_id):
             'question': question,
         })
     else:
-        previous_choice = question.vote_set.all()
-        if previous_choice:
+        if question.vote_set.filter(user=request.user).exists():
             previous_vote = question.vote_set.get(question=question, user=request.user)
             previous_vote.choice = selected_choice
             previous_vote.save()
@@ -116,3 +118,4 @@ def on_logout(user, request, **kwargs):
 def login_fail(credentials, request, **kwargs):
     """Log message of fail login attempt at warning level including username and IP address."""
     logger.warning(f"IP: {get_client_ip(request)} Fail to log in for {credentials['username']}")
+
