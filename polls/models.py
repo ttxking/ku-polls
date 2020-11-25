@@ -61,12 +61,16 @@ class Vote(models.Model):
     """A Choice model.
 
     Each Choice is associated with a Question, Choices and a User.
-
     """
-
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    # Get the question from the choice
+    #question = models.ForeignKey(Question, on_delete=models.CASCADE)
     user = models.ForeignKey(django.contrib.auth.models.User,
                              null=True,
                              blank=True,
                              on_delete=models.CASCADE)
+
+    @property
+    def question(self):
+        """Get the question that this vote applies to."""         
+        return self.choice.question

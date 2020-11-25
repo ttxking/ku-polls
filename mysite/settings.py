@@ -109,7 +109,12 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '%(asctime)s %(name)s %(levelname)s: %(message)s'
+            'format': '%(asctime)s %(name)s %(levelname)s: %(message)s',
+            'datefmt': "%Y-%m-%d %H:%M:%S"
+        },
+        'logfile': {
+            'format': '%(asctime)s %(levelname)-5s %(module)s.%(funcName)s:%(lineno)d  %(message)s',
+            'datefmt': "%Y-%m-%d %H:%M"
         },
     },
     'handlers': {
@@ -117,10 +122,22 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose'
         },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'polls.log',
+            'formatter': 'logfile',
+        },
     },
     'root': {
         'handlers': ['console'],
         'level': 'INFO',
+    },
+    'loggers': {
+        'polls': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
     },
 }
 
