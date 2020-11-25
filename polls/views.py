@@ -13,8 +13,8 @@ import logging.config
 from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
 from django.dispatch import receiver
 
-logging.config.dictConfig(LOGGING)
-logger = logging.getLogger('my_logger')
+#logging.config.dictConfig(LOGGING)
+logger = logging.getLogger(__name__)
 
 
 def index(request):
@@ -43,7 +43,7 @@ def detail(request, pk):
         return redirect('polls:index')
     else:
         try:
-            user_vote = question.vote_set.get(user=request.user)
+            user_vote = get_vote_for_question(request.user, question)
         except (KeyError, Vote.DoesNotExist):
             return render(request, 'polls/detail.html', {'question': question})
         return render(request, 'polls/detail.html', {'question': question, 'vote': user_vote})
@@ -68,25 +68,39 @@ def vote(request, question_id):
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
         logger.info(
-            '{user} voted on {question} (id = {id})'.format(user=request.user, question=question, id=question.id))
+            # printing the question text in log message may make the
+            # log message long and harder to read. the question.id is enough
+            f'{request.user} voted on {question} (id = {question.id})')
     except (KeyError, Choice.DoesNotExist):
         # Redisplay the question voting form.
         messages.error(request, "You didn't select a choice.")
         return render(request, 'polls/detail.html', {
             'question': question,
         })
+    # TODO This 'else' is not needed
     else:
-        if question.vote_set.filter(user=request.user).exists():
-            previous_vote = question.vote_set.get(question=question, user=request.user)
+        previous_vote = get_vote_for_question(request.user, question)
+        if previous_vote:
+            logger.debug(f"Change vote by {request.user} for poll {question.id} from {previous_vote.choice} to {selected_choice}")
             previous_vote.choice = selected_choice
             previous_vote.save()
         else:
-            selected_choice.vote_set.create(question=question, user=request.user)
+            logger.debug(f"Create a new vote by {request.user} for poll {question.id} with choice {selected_choice}")
+            Vote.objects.create(user=request.user, choice=selected_choice)
 
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+def get_vote_for_question(user, question):
+    """Get a user's vote (if any) on a question."""
+    # each choice refers to a question and there should be at most 1 match
+    try:
+        return user.vote_set.get(choice__question=question)
+    except Vote.DoesNotExist:
+        # no vote for this question
+        return None
 
 
 def get_client_ip(request):
