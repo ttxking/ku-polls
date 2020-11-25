@@ -1,19 +1,18 @@
 # Create your views here.
+import logging.config
+
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
+from django.dispatch import receiver
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views import generic
-from django.contrib import messages
 
-from mysite.settings import LOGGING
 from .models import Question, Choice, Vote
-import logging.config
 
-from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
-from django.dispatch import receiver
-
-#logging.config.dictConfig(LOGGING)
+# logging.config.dictConfig(LOGGING)
 logger = logging.getLogger(__name__)
 
 
@@ -81,7 +80,9 @@ def vote(request, question_id):
     else:
         previous_vote = get_vote_for_question(request.user, question)
         if previous_vote:
-            logger.debug(f"Change vote by {request.user} for poll {question.id} from {previous_vote.choice} to {selected_choice}")
+            logger.debug(
+                f"Change vote by {request.user} for poll {question.id} from "
+                f"{previous_vote.choice} to {selected_choice}")
             previous_vote.choice = selected_choice
             previous_vote.save()
         else:
@@ -92,6 +93,7 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
 
 def get_vote_for_question(user, question):
     """Get a user's vote (if any) on a question."""

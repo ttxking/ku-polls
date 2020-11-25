@@ -1,6 +1,6 @@
 import datetime
-import django.contrib.auth.models
 
+import django.contrib.auth.models
 from django.db import models
 from django.utils import timezone
 
@@ -61,10 +61,10 @@ class Vote(models.Model):
     """A Choice model.
 
     Each Choice is associated with a Question, Choices and a User.
+
     """
+
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
-    # Get the question from the choice
-    #question = models.ForeignKey(Question, on_delete=models.CASCADE)
     user = models.ForeignKey(django.contrib.auth.models.User,
                              null=True,
                              blank=True,
@@ -72,5 +72,5 @@ class Vote(models.Model):
 
     @property
     def question(self):
-        """Get the question that this vote applies to."""         
+        """Get the question that this vote applies to."""
         return self.choice.question

@@ -52,7 +52,7 @@ class VoteModelTests(TestCase):
 
         # submit vote
         response = self.client.post(url, {'choice': '1'})
-        self.assertTrue(self.question.vote_set.filter(question=self.question).exists)
+        self.assertTrue(self.question.choice_set.get(choice_text='1').votes != 0)
         self.assertEqual(response.status_code, 302)  # if vote is success redirect to result page
 
     def test_unauthenticated_vote(self):
